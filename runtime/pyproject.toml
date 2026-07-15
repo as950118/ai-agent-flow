@@ -1,0 +1,22 @@
+[project]
+name = "company-os-runtime"
+version = "0.1.0"
+description = "LangChain/LangGraph/LangSmith labs for AI Company Task Manager"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langchain>=1.3.13",
+    "langchain-core>=1.4.9",
+    "langchain-openai>=1.3.5",
+    "langgraph>=1.2.9",
+    "langsmith>=0.10.5",
+    "python-dotenv>=1.2.2",
+    "pyyaml>=6.0.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["company_os", "labs"]
