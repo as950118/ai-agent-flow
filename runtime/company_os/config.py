@@ -43,12 +43,12 @@ def mock_llm() -> bool:
 
 def chat_model_name() -> str:
     """
-    OpenRouter model IDs look like: openai/gpt-4o-mini, anthropic/claude-sonnet-4
+    OpenRouter model IDs look like: openrouter/free, anthropic/claude-sonnet-4
     OpenAI direct: gpt-4o-mini
     """
     if llm_provider() == "openrouter":
         return os.getenv("OPENROUTER_MODEL") or os.getenv(
-            "OPENAI_MODEL", "openai/gpt-4o-mini"
+            "OPENAI_MODEL", "openrouter/free"
         )
     return os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
@@ -67,15 +67,53 @@ def openrouter_headers() -> dict[str, str]:
     return headers
 
 
+def langsmith_api_key() -> str:
+    return (os.getenv("LANGSMITH_API_KEY") or os.getenv("LANGCHAIN_API_KEY") or "").strip()
+
+
+def langsmith_project() -> str:
+    return os.getenv("LANGSMITH_PROJECT") or os.getenv(
+        "LANGCHAIN_PROJECT", "ai-company-task-manager"
+    )
+
+
 def langsmith_enabled() -> bool:
-    return os.getenv("LANGCHAIN_TRACING_V2", "").lower() in {"1", "true", "yes"}
+    tracing = os.getenv("LANGSMITH_TRACING") or os.getenv("LANGCHAIN_TRACING_V2") or ""
+    return tracing.lower() in {"1", "true", "yes"} and bool(langsmith_api_key())
+
+
+def enable_langsmith() -> bool:
+    """
+    Turn on LangSmith tracing for this process if an API key is present.
+    Accepts LANGSMITH_API_KEY or LANGCHAIN_API_KEY.
+    """
+    key = langsmith_api_key()
+    if not key:
+        return False
+    project = langsmith_project()
+    os.environ["LANGSMITH_API_KEY"] = key
+    os.environ["LANGCHAIN_API_KEY"] = key
+    os.environ["LANGSMITH_TRACING"] = "true"
+    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    os.environ["LANGSMITH_PROJECT"] = project
+    os.environ["LANGCHAIN_PROJECT"] = project
+    os.environ.setdefault("LANGCHAIN_ENDPOINT", "https://api.smith.langchain.com")
+    os.environ.setdefault("LANGSMITH_ENDPOINT", "https://api.smith.langchain.com")
+    return True
 
 
 def configure_langsmith(run_name: str | None = None, tags: list[str] | None = None) -> dict:
-    os.environ.setdefault("LANGCHAIN_PROJECT", "ai-company-task-manager")
-    cfg: dict = {}
+    enable_langsmith()
+    os.environ.setdefault("LANGCHAIN_PROJECT", langsmith_project())
+    cfg: dict = {"metadata": {"project": langsmith_project()}}
     if run_name:
         cfg["run_name"] = run_name
     if tags:
         cfg["tags"] = tags
     return cfg
+
+
+def langsmith_project_url() -> str:
+    from urllib.parse import quote
+
+    return f"https://smith.langchain.com/o/default/projects/p/{quote(langsmith_project())}"

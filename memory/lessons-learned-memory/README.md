@@ -45,3 +45,8 @@ Related ADR/Incident:
 ### LL-LAB8 — PRD eval failures
 Fail cases: ambiguous
 Lesson: 모호한 요청은 AC를 채우기 전에 Open Questions를 강제한다.
+
+
+### LL-LAB8 — PRD eval failures
+Fail cases: ambiguous
+Lesson: 모호한 요청은 AC를 채우기 전에 Open Questions를 강제한다.

@@ -21,7 +21,7 @@ uv sync
 |----------|---------|
 | `LLM_PROVIDER` | `openrouter`(기본) \| `openai` |
 | `OPENROUTER_API_KEY` | OpenRouter API key |
-| `OPENROUTER_MODEL` | 예: `openai/gpt-4o-mini`, `anthropic/claude-sonnet-4` |
+| `OPENROUTER_MODEL` | 예: `openrouter/free`, `anthropic/claude-sonnet-4` |
 | `OPENROUTER_BASE_URL` | 기본 `https://openrouter.ai/api/v1` |
 | `MOCK_LLM` | `true`면 API 없이 결정적 mock |
 | `LANGCHAIN_TRACING_V2` | `true`면 LangSmith 트레이스 |
@@ -35,7 +35,7 @@ uv sync
 MOCK_LLM=false
 LLM_PROVIDER=openrouter
 OPENROUTER_API_KEY=sk-or-v1-...
-OPENROUTER_MODEL=openai/gpt-4o-mini
+OPENROUTER_MODEL=openrouter/free
 
 uv run python -m labs.lab00_hello
 ```
