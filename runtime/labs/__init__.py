@@ -1,0 +1,1 @@
+"""Lab entrypoints package."""
